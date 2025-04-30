@@ -32,4 +32,4 @@ Durante o desenvolvimento, foram aplicadas boas práticas que enriqueceram a exp
 
 ```bash
 git clone https://github.com/jonathannrocha/Teste-na-pratica.git
-cd Teste-na-prática
+cd Teste-na-pratica
