@@ -12,9 +12,14 @@ export function getAll(req, res) {
 
 export function create(req, res) {
   const { title, author } = req.body;
-  const book = { id: nextId++, title, author };
-  books.push(book);
-  res.status(201).json(book);
+  if( title || author ) {
+    const book = { id: nextId++, title, author };
+    books.push(book);
+    res.status(201).json(book);
+  } else {
+    res.status(400).json({})
+  }
+
 }
 
 export function update(req, res) {

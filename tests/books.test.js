@@ -37,56 +37,82 @@ function makeRequest({ method, path, data }) {
 }
 
 let server;
-test('SETUP - iniciar servidor', async (t) => {
-  server = app.listen(3000);
-  controller.resetBooks(); 
-});
 
-test('Criar livro', async () => {
-  const res = await makeRequest({
-    method: 'POST',
-    path: '/',
-    data: { title: '1984', author: 'George Orwell' },
+test.describe( "Teste inicias", ()=> {
+  test('SETUP - iniciar servidor', async (t) => {
+    server = app.listen(3000);
+    controller.resetBooks(); 
   });
-
-  assert.strictEqual(res.status, 201);
-  assert.strictEqual(res.body.title, '1984');
-});
-
-test('Editar livro', async () => {
-  const res1 = await makeRequest({
-    method: 'POST',
-    path: '/',
-    data: { title: 'Original', author: 'Autor' },
+  
+  test('Criar livro', async () => {
+    const res = await makeRequest({
+      method: 'POST',
+      path: '/',
+      data: { title: '1984', author: 'George Orwell' },
+    });
+  
+    assert.strictEqual(res.status, 201);
+    assert.strictEqual(res.body.title, '1984');
   });
-
-  const bookId = res1.body.id;
-
-  const res2 = await makeRequest({
-    method: 'PUT',
-    path: `/${bookId}`,
-    data: { title: 'Atualizado', author: 'Autor X' },
+  
+  test('Editar livro', async () => {
+    const res1 = await makeRequest({
+      method: 'POST',
+      path: '/',
+      data: { title: 'Original', author: 'Autor' },
+    });
+  
+    const bookId = res1.body.id;
+  
+    const res2 = await makeRequest({
+      method: 'PUT',
+      path: `/${bookId}`,
+      data: { title: 'Atualizado', author: 'Autor X' },
+    });
+  
+    assert.strictEqual(res2.status, 200);
+    assert.strictEqual(res2.body.title, 'Atualizado');
   });
-
-  assert.strictEqual(res2.status, 200);
-  assert.strictEqual(res2.body.title, 'Atualizado');
-});
-
-test('Excluir livro', async () => {
-  const res1 = await makeRequest({
-    method: 'POST',
-    path: '/',
-    data: { title: 'Livro para excluir', author: 'A' },
+  
+  test('Excluir livro', async () => {
+    const res1 = await makeRequest({
+      method: 'POST',
+      path: '/',
+      data: { title: 'Livro para excluir', author: 'A' },
+    });
+  
+    const res2 = await makeRequest({
+      method: 'DELETE',
+      path: `/${res1.body.id}`,
+    });
+  
+    assert.strictEqual(res2.status, 204);
   });
-
-  const res2 = await makeRequest({
-    method: 'DELETE',
-    path: `/${res1.body.id}`,
+  
+  test('TEARDOWN - encerrar servidor', async () => {
+    server.close();
   });
+})
 
-  assert.strictEqual(res2.status, 204);
-});
+test.describe( "Teste erros de chamada", ()=> {
+  test('SETUP - iniciar servidor', async (t) => {
+    server = app.listen(3000);
+    controller.resetBooks(); 
+  });
+  
+  test('Não deve criar livro', { only: true },  async () => {
+    const res = await makeRequest({
+      method: 'POST',
+      path: '/',
+      data: {  },
+    });
+  
+    assert.strictEqual(res.status, 400);
+  });
+  
+  test.skip('TEARDOWN - encerrar servidor', async () => {
+    server.close();
+  });
+})
 
-test('TEARDOWN - encerrar servidor', async () => {
-  server.close();
-});
+
