@@ -100,7 +100,7 @@ test.describe( "Teste erros de chamada", ()=> {
     controller.resetBooks(); 
   });
   
-  test('Não deve criar livro', { only: true },  async () => {
+  test('Não deve criar livro',   async () => {
     const res = await makeRequest({
       method: 'POST',
       path: '/',
@@ -110,7 +110,7 @@ test.describe( "Teste erros de chamada", ()=> {
     assert.strictEqual(res.status, 400);
   });
   
-  test.skip('TEARDOWN - encerrar servidor', async () => {
+  test('TEARDOWN - encerrar servidor', async () => {
     server.close();
   });
 })
